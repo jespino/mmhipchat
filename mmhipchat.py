@@ -85,7 +85,10 @@ class MMExport():
 @click.command()
 @click.argument("hipchat-export")
 @click.argument("output-directory")
-def convert(hipchat_export, output_directory):
+@click.option("--team-name", default="hipchat", help="Name used for the team created to import hipchat data")
+@click.option("--team-display-name", default="Hipchat", help="Display name used for the team created to import hipchat data")
+@click.option("--team-privacy", default="private", type=click.Choice(["public", "private"]), help="Privacy configuration of the team created to import hipchat data")
+def convert(hipchat_export, output_directory, team_name, team_display_name):
     try:
         exportFile = tarfile.open(hipchat_export)
     except Exception as e:
@@ -95,9 +98,9 @@ def convert(hipchat_export, output_directory):
     mmexport = MMExport(output_directory)
 
     team = {
-        "name": "hipchat",
-        "display_name": "Hipchat",
-        "type": "I",
+        "name": team_name,
+        "display_name": team_display_name,
+        "type": "I" if team_privacy == "private" else "O",
         "description": "",
         "allow_open_invite": False,
     }
